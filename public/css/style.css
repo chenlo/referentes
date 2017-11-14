@@ -1,0 +1,120 @@
+img.bandera {
+	width: 30px;
+	height: auto;
+}
+img.bandera-ficha {
+	height: 50px;
+	width: auto;
+	margin-right: 15px;
+}
+img.logo {
+	width: 50px;
+	height: auto;
+	margin-right: 10px;
+	float: left;
+}
+.mgt-1 {
+	margin-top: 1em;
+}
+.mgt-2 {
+	margin-top: 2em;
+}
+.mgb-1 {
+	margin-bottom: 1em;
+}
+.mgb-2 {
+	margin-bottom: 2em;
+}
+.panel {
+	padding: 3em;
+}
+.navbar {
+	margin-bottom: 0px;
+	border-bottom: 0px;
+}
+#first-navbar {
+	background-color: #454545;
+	color: #fff;
+}
+#second-navbar {
+	background-color: #990033;
+	color: #fff;
+}
+.navbar-default .navbar-brand {
+	color: #fff;
+}
+.navbar-default .navbar-nav>li>a, .navbar-default .navbar-text {
+	color: #fff;
+}
+p {
+	color: #454545;
+}
+.panel-heading h4 {
+	font-size: 1.5em;
+	color: #994D33;
+}
+.big-number {
+	font-size: 3em;
+	color: #999933;
+}
+.footer-bottom {
+    background-color: #454545;
+    min-height: 30px;
+	width: 100%;
+	margin-top: 20px;
+}
+.copyright {
+    color: #fff;
+    line-height: 30px;
+    min-height: 30px;
+    padding: 7px 0;
+}
+.design {
+    color: #fff;
+    line-height: 30px;
+    min-height: 30px;
+    padding: 7px 0;
+    text-align: right;
+}
+.design a {
+    color: #fff;
+}
+.btn > a {
+	text-decoration: none;
+	color: #fff;
+}
+form.boton {
+	display: inline-block;
+	margin-left: 5px;
+}
+.navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
+	color: #aaa;
+}
+.navbar-header a.navbar-brand:hover {
+	color: #aaa;	
+}
+li.top-menu {
+	line-height: 22px;
+    padding-bottom: 10px;
+    margin-right: 10px;
+    padding-left: 15px;
+}
+@media (min-width: 768px)  {
+	li.top-menu {
+		font-style: italic;
+		font-weight: 300;
+		padding-top: 14px;
+	}   
+}
+.cambio-header {
+	font-size: 1.5em;
+	margin-right: 15px;
+}
+ul.cambios li > img {
+	height: 20px;
+	width: auto;
+	margin-right: 15px;
+}
+ul.cambios li {
+	list-style: none;
+}
