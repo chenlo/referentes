@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cambio extends Model
 {
-    protected $fillable = ['referente_id', 'user_id', 'lengua_id', 'tipo_id', 'palabra', 'definicion', 'anno_testimonio', 'siglo'];
+    protected $fillable = ['referente_id', 'user_id', 'lengua_id', 'tipo_id', 'palabra', 'anno_testimonio', 'siglo'];
     
     public function referente() {
         return $this->belongsTo('Referentes\Referente');
@@ -24,8 +24,29 @@ class Cambio extends Model
         return $this->belongsTo('Referentes\Tipo');
     }
 
+    public function recategorizacion()
+    {
+        return $this->hasOne('Referentes\Recategorizacion');
+    }
+
     public function getSigloFromAnno(){
         return  ($this->anno / 100) +1;
+    }
+
+    public function acepcions(){
+        return $this->hasMany('Referentes\Acepcion');
+    }
+
+    public function deleteAcepcions(){
+        foreach ($this->acepcions as $key => $acepcion) {
+            $acepcion->delete();
+        }
+    }
+
+    public function deleteRecategorizacion(){
+        if($this->recategorizacion()!=null){
+            $this->recategorizacion()->delete();
+        }
     }
 
     public function getSiglo()

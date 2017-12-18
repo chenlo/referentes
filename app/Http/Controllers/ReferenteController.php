@@ -46,13 +46,24 @@ class ReferenteController extends Controller
             'palabra'=>'required',
             'informacion_enciclopedica'=>'required'
         ]);
+        /** Validar variantes required
+        $rules = [];
 
+        foreach($request->input('name') as $key => $value) {
+            $rules["name.{$key}"] = 'required';
+        }
+        $validator = Validator::make($request->all(), $rules);
+        */
         $input = $request->all();
         $referente = Referente::create($input);
         $referente->user_id = auth()->user()->id;        
         $referente->save();
-
-        return redirect('/referentes')->with('success', 'Referente ' . $referente->nombre .' creado.');
+        if(!empty($request->variantes[0])){
+            foreach($request->variantes as $variante) {
+                $referente->variantes()->create(['palabra' => $variante]);
+            }
+        }
+        return redirect('/referentes')->with('success', 'Referente ' . $referente->palabra .' creado.');
     }
 
     public function show($id)
@@ -74,16 +85,21 @@ class ReferenteController extends Controller
             'palabra'=>'required',
             'informacion_enciclopedica'=>'required'
         ]);
-		$referente->update($input);
-        return redirect('/referentes')->with('success', 'Referente ' . $referente->nombre .' editado.');
+        $referente->deleteVariantes();
+        if(!empty($request->variantes[0])){
+            $referente->updateVariantes($request->variantes);
+        }
+
+        $referente->update($input);
+        
+        return redirect('/referentes')->with('success', 'Referente ' . $referente->palabra .' editado.');
     }
     
     public function destroy($id)
     {
         $referente = Referente::find($id);
-        foreach ($referente->cambios as $cambio) {
-            $cambio->delete();
-        }
+        $referente->deleteVariantes();
+        $referente->deleteCambios();
         $referente->delete();
         return redirect('/referentes')->with('success', 'Referente ' . $referente->nombre .' eliminado.');
     }

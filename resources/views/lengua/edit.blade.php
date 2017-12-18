@@ -23,8 +23,11 @@
              <div class="form-controls">
                 <img src="{{ asset('images/banderas/'.$lengua->id.'.png')}}" alt="" class="">
                 {!! Form::file('imagen', null) !!}
+                <br>
+                <a href="{{ asset('images/banderas.zip') }}">Descargar archivos con todas las banderas</a>
              </div>
         </div>
+
      {!! Form::submit('Actualizar', ['class' => 'btn btn-primary']) !!}
      <a href="{{ url('lenguas') }}" class="btn btn-warning">Ver todas las lenguas</a>    
     {!! Form::close() !!}

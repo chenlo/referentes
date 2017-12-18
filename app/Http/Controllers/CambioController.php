@@ -9,6 +9,8 @@ use Referentes\Cambio;
 use Referentes\Referente;
 use Referentes\Lengua;
 use Referentes\Tipo;
+use Referentes\InicialCategoria;
+use Referentes\FinalCategoria;
 
 class CambioController extends Controller
 {
@@ -27,7 +29,9 @@ class CambioController extends Controller
         $referente = Referente::find($id);
         $lenguas = Lengua::pluck('nombre', 'id');
         $tipos = Tipo::pluck('nombre', 'id');
-	    return view('cambio.create')->with('referente', $referente)->with('lenguas', $lenguas)->with('tipos', $tipos);
+        $categorias_iniciales = InicialCategoria::pluck('palabra', 'id');
+        $categorias_finales = FinalCategoria::pluck('palabra', 'id');
+	    return view('cambio.create')->with('referente', $referente)->with('lenguas', $lenguas)->with('tipos', $tipos)->with('categorias_iniciales', $categorias_iniciales)->with('categorias_finales', $categorias_finales);
 	}
 
 	/**
@@ -40,9 +44,10 @@ class CambioController extends Controller
     {
         $this->validate($request, [
             'palabra'=>'required',
-            'definicion'=>'required',
             'tipo_id'=>'required',
             'lengua_id'=>'required',
+            'inicial_categoria_id'=>'required_with:final_categoria_id',
+            'final_categoria_id'=>'required_with:inicial_categoria_id',
             'anno_testimonio'=>'required_without:siglo',
             'siglo'=>'required_without:anno_testimonio|min:0|max:21'
         ]);
@@ -51,19 +56,28 @@ class CambioController extends Controller
         if ($request->has('anno_testimonio')) {
             $siglo = intdiv($request->input('anno_testimonio'), 100) + 1;
         }
-        Cambio::create([
+        $cambio = Cambio::create([
             'referente_id' => $request->input('referente_id'),
             'user_id' => auth()->user()->id,
             'lengua_id' => $request->input('lengua_id'),
             'tipo_id' => $request->input('tipo_id'),
             'palabra' => $request->input('palabra'),
-            'definicion' => $request->input('definicion'),
             'anno_testimonio' => $request->input('anno_testimonio'),
             'siglo' => $siglo,
         ]);
-        
-        $referente = Referente::find($request->input('referente_id'));
-        return view('referente.show')->with('referente', $referente)->with('success', 'Cambio ' . $request->input('palabra') .' añadido.');;
+        if(!empty($request->acepcions[0])){
+            foreach($request->acepcions as $acepcion) {
+                $cambio->acepcions()->create(['palabra' => $acepcion]);
+            }
+        }
+        if( !empty($request->input('inicial_categoria_id')) && !empty($request->input('final_categoria_id')) ){
+            $cambio->recategorizacion()->create([
+                'inicial_categoria_id' => $request->input('inicial_categoria_id'),
+                'final_categoria_id' => $request->input('final_categoria_id'),
+            ]);
+        }
+    
+        return view('referente.show')->with('referente', $cambio->referente)->with('success', 'Cambio ' . $request->input('palabra') .' añadido.');
     }
 
     public function edit($id)
@@ -71,7 +85,10 @@ class CambioController extends Controller
         $cambio = Cambio::findOrFail($id);
         $lenguas = Lengua::pluck('nombre', 'id');
         $tipos = Tipo::pluck('nombre', 'id');
-        return view('cambio.edit')->with('cambio', $cambio)->with('lenguas', $lenguas)->with('tipos', $tipos);
+        $categorias_iniciales = InicialCategoria::pluck('palabra', 'id');
+        $categorias_finales = FinalCategoria::pluck('palabra', 'id');
+
+        return view('cambio.edit')->with('cambio', $cambio)->with('lenguas', $lenguas)->with('tipos', $tipos)->with('categorias_iniciales', $categorias_iniciales)->with('categorias_finales', $categorias_finales);
     }
 
     public function update($id, Request $request){
@@ -79,11 +96,12 @@ class CambioController extends Controller
         $cambio = Cambio::findOrFail($id);
         $this->validate($request, [
             'palabra'=>'required',
-            'definicion'=>'required',
             'tipo_id'=>'required',
             'lengua_id'=>'required',
             'anno_testimonio'=>'required_without:siglo',
-            'siglo'=>'required_without:anno_testimonio|min:0|max:21'
+            'siglo'=>'required_without:anno_testimonio|min:0|max:21',
+            'inicial_categoria_id'=>'required_with:final_categoria_id',
+            'final_categoria_id'=>'required_with:inicial_categoria_id'
         ]);
         $siglo = $request->input('siglo');
         if ($request->has('anno_testimonio')) {
@@ -91,7 +109,19 @@ class CambioController extends Controller
         }
         $input['siglo'] = $siglo;
 
+        $cambio->recategorizacion()->update([
+            'inicial_categoria_id' => $request->input('inicial_categoria_id'),
+            'final_categoria_id' => $request->input('final_categoria_id'),
+        ]);
+
         $cambio->update($input);
+
+        $cambio->deleteAcepcions();        
+        if(!empty($request->acepcions[0])){
+            foreach($request->acepcions as $acepcion) {
+                $cambio->acepcions()->create(['palabra' => $acepcion]);
+            }
+        }
         
         return redirect('cambios')->with('success', 'Cambio ' . $cambio->palabra .' editado.');
     }
@@ -99,6 +129,8 @@ class CambioController extends Controller
     public function destroy($id)
     {
         $cambio = Cambio::findOrFail($id);
+        $cambio->deleteAcepcions();
+        $cambio->deleteRecategorizacion();
         $cambio->delete();
         return view('referente.show')->with('referente', $cambio->referente)->with('success', 'Cambio ' . $cambio->palabra .' eliminado.');
     }

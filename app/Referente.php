@@ -15,4 +15,28 @@ class Referente extends Model
     public function cambios(){
         return $this->hasMany('Referentes\Cambio');
     }
+
+    public function variantes(){
+        return $this->hasMany('Referentes\Variante');
+    }
+
+    public function deleteCambios(){
+        foreach ($this->cambios as $key => $cambio) {
+            $cambio->delete();
+        }
+    }
+
+    public function updateVariantes($variantes){
+        foreach($variantes as $variante) {
+            if(!empty($variante)){
+                $this->variantes()->create(['palabra' => $variante]);
+            }
+        }
+    }
+    
+    public function deleteVariantes(){
+        foreach ($this->variantes as $key => $variante) {
+            $variante->delete();
+        }
+    }
 }

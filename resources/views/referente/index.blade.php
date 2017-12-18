@@ -17,12 +17,13 @@
 				<td>Id</td>
 				<td>Palabra</td>
 				<td>Cambios</td>
+				<td>Variantes</td>
 				<td>Propietario</td>
 				<td>Acciones</td>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach($referentes as $referente)
+			@forelse($referentes as $referente)
 				<tr>
 					<td>{{$referente->id}}</td>
 					<td>{{$referente->palabra}}</td>
@@ -32,6 +33,17 @@
 								<li>
 									<img src="{{asset('images/banderas/'.$cambio->lengua->id.'.png')}}" alt="">
 									{{ $cambio->palabra }}
+								</li>
+							@empty
+								<li>No tiene</li>
+							@endforelse
+						</ul>
+					</td>
+					<td>
+						<ul class="cambios">
+							@forelse($referente->variantes as $variante)
+								<li>
+									{{ $variante->palabra }}
 								</li>
 							@empty
 								<li>No tiene</li>
@@ -60,7 +72,9 @@
 						@endif
 					</td>
 				</tr>
-			@endforeach
+			@empty
+        		<tr><td colspan="6" class="alert alert-danger">Aún no ha creado ningún referente.</td></tr>
+      		@endforelse
 		</tbody>
 	</table>
 </div>

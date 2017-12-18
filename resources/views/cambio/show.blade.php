@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header')
-  <h1>{{ $referente->palabra }}</h1>
+  <h1>{{ $cambio->palabra }}</h1>
 @endsection
 @section('content')
 <div class="panel panel-default">
@@ -65,9 +65,7 @@
           </div>
           <div class="panel-body">
             <div class="row">
-              <div class="col-md-4">
-                <strong>Tipo de cambio</strong>
-                <p>{{ $cambio->tipo->nombre }}</p>
+              <div class="col-md-6">
                 <strong>Tipo de cambio</strong>
                 <p>{{ $cambio->tipo->nombre }}</p>
                 <strong>Acepciones</strong>
@@ -80,25 +78,9 @@
                   <p>No tiene acepciones</p>
                 @endforelse
               </div>
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <strong>Lengua</strong>
                 <p>{{ $cambio->lengua->nombre }}</p>
-                <strong>Categoría inicial de recategorización</strong>
-                <p>
-                  @if($cambio->recategorizacion )
-                    {{ $cambio->recategorizacion->inicialCategoria->palabra  }}
-                  @else
-                    No especificado
-                  @endif
-                </p>
-                <strong>Categoría final de recategorización</strong>
-                 @if($cambio->recategorizacion )
-                    {{ $cambio->recategorizacion->finalCategoria->palabra  }}
-                  @else
-                    No especificado
-                  @endif
-              </div>
-              <div class="col-md-4">
                 <strong>Año del primer testimonio</strong>
                 <p>
                   @if($cambio->anno_testimonio)

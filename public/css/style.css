@@ -63,6 +63,11 @@ p {
 	width: 100%;
 	margin-top: 20px;
 }
+.bottom-fixed {
+	position:fixed;
+   	left:0px;
+   	bottom:0px;
+}
 .copyright {
     color: #fff;
     line-height: 30px;
